@@ -94,7 +94,11 @@ class StateChange extends ActionBase implements ContainerFactoryPluginInterface 
    * @return \Drupal\Core\Entity\ContentEntityInterface
    */
   protected function loadLatestRevision(ContentEntityInterface $entity) {
-    return $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+    $original_entity = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+    if (!$entity->isDefaultTranslation() && $original_entity->hasTranslation($entity->language()->getId())) {
+      $original_entity = $original_entity->getTranslation($entity->language()->getId());
+    }
+    return $original_entity;
   }
 
   /**
